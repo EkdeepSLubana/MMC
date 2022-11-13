@@ -1,9 +1,9 @@
 # Mechanistic Mode Connectivity
 
 
-Codebase for the paper "Mechanistic Mode Connectivity"
+Codebase for the paper "Mechanistic Mode Connectivity".
 
-Contains code for generating and training models on synthetic datasets, finding and evaluating connectivity paths between two minimizers, running counterfactual evaluation, and executing several fine-tuning methods LLRT/LPFT/CBFT.
+Contains code for generating and training models on synthetic datasets, finding and evaluating connectivity paths between two minimizers, running counterfactual evaluation, and executing several fine-tuning methods.
 
 ## Requirements
 
@@ -20,7 +20,7 @@ pip -r install requirements.txt
 ```
 
 
-## Example execution 
+## Example execution commands
 
 Training VGG-13 models on CIFAR-10 with box cues dataset with 80% of data containing synthetic cues
 
