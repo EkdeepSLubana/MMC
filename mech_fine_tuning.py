@@ -89,7 +89,7 @@ def fine_tuning(dataloader, epoch):
 
 
 ### CBFT
-def CBFT(dataloader_cue, dataloader_nocue, epoch=0, lambd=1, stop_break=20, loss_margin=1.0):
+def CBFT(dataloader_cue, dataloader_nocue, epoch=0, lambd=1, warmup_epochs=1, loss_margin=1.0):
 
     net_nc.train()
     criterion = nn.CrossEntropyLoss()
@@ -162,20 +162,26 @@ def CBFT(dataloader_cue, dataloader_nocue, epoch=0, lambd=1, stop_break=20, loss
             ##### Step 2: No-cue + Invariance loss
             # compute loss
             net_nc.zero_grad()
-            z_nc, z_c = net_nc(inputs_nc, use_linear=False), net_nc(inputs_c, use_linear=False)
-            inv_loss = 0
-            for i in range(n_classes):
-                if (class_ids_nc[i].shape[0] == 0 or class_ids_c[i].shape[0] == 0):
-                    continue
-                # MSE
-                inv_loss += (F.normalize(z_nc[class_ids_nc[i][:,0]].mean(dim=0, keepdim=True), dim=1) - F.normalize(z_c[class_ids_c[i][:,0]].mean(dim=0, keepdim=True), dim=1)).norm().pow(2)
+            if(epoch < warmup_epochs):
+                outputs_ns = net_ns(inputs_ns)
+                loss = criterion(outputs_ns, targets_ns)
+            else:
+                z_nc, z_c = net_nc(inputs_nc, use_linear=False), net_nc(inputs_c, use_linear=False)
+                inv_loss = 0
+                for i in range(n_classes):
+                    if (class_ids_nc[i].shape[0] == 0 or class_ids_c[i].shape[0] == 0):
+                        continue
+                    # MSE
+                    inv_loss += (F.normalize(z_nc[class_ids_nc[i][:,0]].mean(dim=0, keepdim=True), dim=1) - F.normalize(z_c[class_ids_c[i][:,0]].mean(dim=0, keepdim=True), dim=1)).norm().pow(2)
 
-            outputs_nc = net_nc.linear(z_nc)
-            loss = criterion(outputs_nc, targets_nc) + lambd * inv_loss / n_classes
-            loss.backward()
+                outputs_nc = net_nc.linear(z_nc)
+                loss = criterion(outputs_nc, targets_nc) + lambd * inv_loss / n_classes
 
             # Step 2 update
+            loss.backward()
             optimizer_nc.step()
+            if(epoch > warmup_epochs):
+                lr_scheduler.step()
 
             train_loss_nc += loss.item()
             _, predicted_nc = outputs_nc.max(1)
@@ -188,7 +194,6 @@ def CBFT(dataloader_cue, dataloader_nocue, epoch=0, lambd=1, stop_break=20, loss
                                     accuracy_nc=100. * correct_nc/total_nc, lr=optimizer_nc.param_groups[0]['lr'])
 
     return 100. * correct_c/total_c, 100. * correct_nc/total_nc
-
 
     
     
