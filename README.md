@@ -16,7 +16,7 @@ The code requires:
 Dependencies can be installed via the following command:
 
 ```setup
-pip -r install requirements.txt
+pip install -r requirements.txt
 ```
 
 
@@ -42,14 +42,11 @@ Finding midpoints for identifying a quadratic path between VGG-13 models on CIFA
 python train_eval_mc.py --model=VGG-13 --perform=train_midpoint --cue_type=box --id_data=cue --base_dataset=CIFAR10 --cue_proportion=0.8
 ```
 
-
 Mechanistic fine-tuning using CBFT of a VGG-13 model trained on CIFAR-10 with box cues dataset that contained 80% samples with synthetic cues.
 
 ```mechft
-python mech_fine_tuning.py --model=VGG-13 --base_dataset=CIFAR-10 --cue_model_path=path_to_model --cue_type=box --cue_proportion=0.8 --n_epochs=20 --ft_method=CBFT --n_clean=2500 --n_cue=47500
+python mech_fine_tuning.py --model=VGG-13 --base_dataset=CIFAR10 --cue_model_path=path_to_model --cue_type=box --cue_proportion=0.8 --n_epochs=20 --ft_method=CBFT --n_clean=2500 --n_cue=47500
 ```
-
-
 
 ## Organization
 
@@ -68,4 +65,3 @@ python mech_fine_tuning.py --model=VGG-13 --base_dataset=CIFAR-10 --cue_model_pa
 * **models.py**: Model definitions (VGG-13 / ResNet-18)
 
 * **utils.py**: Test evaluation function / Learning rate scheduler
-

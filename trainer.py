@@ -58,6 +58,11 @@ def net_train(net, optimizer, epoch, dataloader, lr_val=0.1):
 
 ### Main
 if __name__ == "__main__":
+    accs_dict = {
+        'train': [],
+        'test_nocue': [],
+        'test_cue': []
+    }
 
     # setup
     parser = argparse.ArgumentParser()
@@ -67,6 +72,8 @@ if __name__ == "__main__":
     parser.add_argument("--base_dataset", default='CIFAR10', choices=['CIFAR10', 'CIFAR100', 'Dominoes'])
     parser.add_argument("--cue_type", default='nocue', choices=['nocue', 'box', 'dominoes'])
     parser.add_argument("--cue_proportion", type=float, default=1.)
+    parser.add_argument("--nocue_type", default='box', choices=['nocue', 'box', 'dominoes'])
+    parser.add_argument("--nocue_proportion", type=float, default=0.8)
     parser.add_argument("--n_epochs", type=int, default=100)
     parser.add_argument("--batch_size", type=int, default=256)
     parser.add_argument("--start_lr", type=float, default=0.1)
