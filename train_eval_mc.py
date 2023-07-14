@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     save_path = args.save_path
     if(args.path_cue == None):
-        path_cue = './saved_models/{}_{}_net_100_epochs_{}_cue_{:.1f}_proportion_1.0_not_pretrained_{}_seed.pth'.format(
+        path_cue = './saved_models/cue/{}_{}_net_100_epochs_{}_cue_{:.1f}_proportion_not_pretrained_{}_seed.pth'.format(
             args.base_dataset, args.model, args.cue_type, args.cue_proportion, args.seed)
     else:
         path_cue = args.path_cue

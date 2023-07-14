@@ -175,7 +175,7 @@ def get_dataloader(load_type='train', base_dataset='CIFAR10', cue_type='nocue', 
     # define base dataset (pick train or test)
     dset_type = getattr(torchvision.datasets, base_dataset)
     dset = dset_type(root=f'{data_dir}/{base_dataset.lower()}/', 
-                     train=(load_type == 'train'), download=False, transform=get_transform('nocue'))
+                     train=(load_type == 'train'), download=True, transform=get_transform('nocue'))
 
     # pick cue
     if (cue_type == 'nocue'):
@@ -218,6 +218,3 @@ def get_dominoes_associations(targets_fmnist, targets_c10):
         idx_fmnist = np.where(targets_fmnist == class_num)[0]
         association_ids[class_num] = {idx_c10[i]: idx_fmnist[i] for i in range(len(targets_c10) // 10)}
     return association_ids
-
-
-

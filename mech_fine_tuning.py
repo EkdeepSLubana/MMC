@@ -8,8 +8,10 @@ import torch.backends.cudnn as cudnn
 import torch.nn.functional as F
 import numpy as np
 import copy
+import os
 
 import syndata
+import utils
 from models import create_model
 from utils import linear_eval, LR_Scheduler
 
@@ -163,8 +165,8 @@ def CBFT(dataloader_cue, dataloader_nocue, epoch=0, lambd=1, warmup_epochs=1, lo
             # compute loss
             net_nc.zero_grad()
             if(epoch < warmup_epochs):
-                outputs_ns = net_ns(inputs_ns)
-                loss = criterion(outputs_ns, targets_ns)
+                outputs_nc = net_nc(inputs_nc)
+                loss = criterion(outputs_nc, targets_nc)
             else:
                 z_nc, z_c = net_nc(inputs_nc, use_linear=False), net_nc(inputs_c, use_linear=False)
                 inv_loss = 0
@@ -281,6 +283,11 @@ if __name__ == "__main__":
     accs_dict = {'train_cue': [], 'train_nocue': [], 'test_cue': [], 'test_nocue': [], 'test_randcue': [], 'test_randimg': []}
 
 
+    # Ensure the directory exists before trying to open a file in it
+    dir_name = "./tab_results/"
+    if not os.path.exists(dir_name):
+        os.makedirs(dir_name)
+    
     ##### LLRT / LPFT: do LLRT separately for ease of implementation
     if(args.ft_method == 'LLRT' or args.ft_method == 'LPFT'):
         LLRT(dataloader=dataloader_nocue, n_epochs=200, base_lr=30)
@@ -336,4 +343,3 @@ if __name__ == "__main__":
                     }
     with open("./tab_results/{}_{}_{}_{}_proportion_{}_seed_{}.pkl".format(args.start_lr, args.model, args.ft_method, args.base_dataset, args.save_proportion, args.seed), 'wb') as f:
         pkl.dump(saved_results, f)
-        
